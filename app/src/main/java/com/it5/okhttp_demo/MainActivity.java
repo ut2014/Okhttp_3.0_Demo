@@ -10,12 +10,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 //        getRequest();
 //        postRequest();
 //        download_tb();
 //        Access_Header();
-        get_json();
+        get_json1();
     }
 
     private void getRequest() {
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         ).start();
 
     }
+
     private void Access_Header() {
         final OkhttpDemo okhttpDemo = new OkhttpDemo();
         new Thread(
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void get_SSl(){//ssl https
+    private void get_SSl() {//ssl https
         HttpsSSL customTrust = new HttpsSSL(this);
         try {
 //            customTrust.run();
@@ -64,11 +65,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void get_json(){
-        OkhttpJson okhttpJson=new OkhttpJson();
-        try{
+    private void get_json() {
+        OkhttpJson okhttpJson = new OkhttpJson();
+        try {
             okhttpJson.run_json();
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void get_json1() {
+        OkhttpJson okhttpJson = new OkhttpJson();
+        try {
+            okhttpJson.run_json1();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

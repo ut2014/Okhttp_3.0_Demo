@@ -3,8 +3,11 @@ package com.it5.okhttp_demo;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.it5.okhttp_demo.been.GitUser;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -39,6 +42,26 @@ public class OkhttpJson {
                     System.out.println(entry.getValue().content);
 //                    Log.i("111",entry.getValue().content);
                 }*/
+            }
+        });
+    }
+
+
+    public void run_json1(){
+        Request request=new Request.Builder()
+                .url("https://api.github.com/repos/square/okhttp/issues")
+                .build();
+        new OkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("fails",e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                List<GitUser> users= gson.fromJson(response.body().charStream(),new TypeToken<List<GitUser>>(){}.getType());
+                System.out.println(users.size()+""+users.get(0).getBody());
             }
         });
     }
