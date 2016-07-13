@@ -2,20 +2,23 @@ package com.it5.okhttp_demo.https;
 
 import android.content.Context;
 
-import com.it5.okhttp_demo.OkhttpDemo;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -31,7 +34,7 @@ import okhttp3.Response;
 /**
  * Created by IT5 on 2016/7/12.
  */
-public class HttpsUtils {
+public class HttpsSSL {
     private OkHttpClient client;
 
     public Context mContext;
@@ -40,7 +43,7 @@ public class HttpsUtils {
      * 初始化HTTPS,添加信任证书
      * @param context
      */
-    public HttpsUtils(Context context) {
+    public HttpsSSL(Context context) {
         mContext = context;
         X509TrustManager trustManager;
         SSLSocketFactory sslSocketFactory;
@@ -74,7 +77,7 @@ public class HttpsUtils {
 //                .url("https://kyfw.12306.cn/otn/")
                 .url("https://api.github.com/repos/square/okhttp/issues")
                 .build();
-        new OkhttpDemo().getCertificateClient().newCall(request).enqueue(new Callback() {
+        getCertificateClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -187,6 +190,68 @@ public class HttpsUtils {
             return keyStore;
         } catch (IOException e) {
             throw new AssertionError(e);
+        }
+    }
+
+
+
+    //信任所有的证书
+    public OkHttpClient getCertificateClient() {
+        OkHttpClient.Builder mBuilder  = new OkHttpClient.Builder();
+//        mBuilder.sslSocketFactory(createSSLSocketFactory(),new TrustAllManager());
+        mBuilder.sslSocketFactory(createSSLSocketFactory());
+        mBuilder.hostnameVerifier(new TrustAllHostnameVerifier());
+        return mBuilder.build();
+
+        /*new OkHttpClient.Builder()
+                .sslSocketFactory(createSSLSocketFactory(),new TrustAllManager())
+                .build();*/
+    }
+
+    /**
+     * 默认信任所有的证书
+     * TODO 最好加上证书认证，主流App都有自己的证书
+     *
+     * @return
+     */
+
+    private static SSLSocketFactory createSSLSocketFactory() {
+
+        SSLSocketFactory sSLSocketFactory = null;
+
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, new TrustManager[]{new TrustAllManager()},
+                    new SecureRandom());
+            sSLSocketFactory = sc.getSocketFactory();
+        } catch (Exception e) {
+        }
+
+        return sSLSocketFactory;
+    }
+
+    private static class TrustAllManager implements X509TrustManager {
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType)
+
+                throws CertificateException {
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
+    }
+
+    private static class TrustAllHostnameVerifier implements HostnameVerifier {
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
         }
     }
 
