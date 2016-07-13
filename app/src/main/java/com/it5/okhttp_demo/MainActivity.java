@@ -3,7 +3,7 @@ package com.it5.okhttp_demo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.it5.okhttp_demo.https.HttpsUtils;
+import com.it5.okhttp_demo.https.HttpsSSL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void get_SSl(){//ssl https
-        HttpsUtils customTrust = new HttpsUtils(this);
+        HttpsSSL customTrust = new HttpsSSL(this);
         try {
 //            customTrust.run();
             customTrust.run_all();

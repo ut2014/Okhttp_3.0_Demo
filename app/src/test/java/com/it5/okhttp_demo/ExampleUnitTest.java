@@ -1,7 +1,5 @@
 package com.it5.okhttp_demo;
 
-import com.it5.okhttp_demo.https.HttpsUtils;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
