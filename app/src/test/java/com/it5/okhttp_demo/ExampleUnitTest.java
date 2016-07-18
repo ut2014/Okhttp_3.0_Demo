@@ -45,6 +45,12 @@ public class ExampleUnitTest {
 
     @Test
     public void testGet_String(){
+
         Retrofit_Demo.Get_String();
+    }
+    @Test
+    public void testQueryGET(){
+
+        Retrofit_Demo.QueryGET();
     }
 }

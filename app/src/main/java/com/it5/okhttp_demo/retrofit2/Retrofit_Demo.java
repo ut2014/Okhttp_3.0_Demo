@@ -5,13 +5,16 @@ import android.util.Log;
 
 import com.it5.okhttp_demo.retrofit2.interf.GitHub;
 import com.it5.okhttp_demo.retrofit2.interf.PageService;
+import com.it5.okhttp_demo.retrofit2.interf.QueryGET;
 import com.it5.okhttp_demo.retrofit2.interf.SimpleGET;
 import com.it5.okhttp_demo.retrofit2.interf.SimplePOST;
 import com.it5.okhttp_demo.retrofit2.interf.StringClient;
 import com.it5.okhttp_demo.retrofit2.pojo.Contributor;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -149,6 +152,27 @@ public class Retrofit_Demo {
         try {
             Response<String> str=call.execute();
             System.out.print(str.body());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void QueryGET(){
+        String url="http://tieba.baidu.com";
+        Map<String, String> map=new HashMap<>();
+        map.put("gender","male");
+        map.put("address","sz");
+
+        Retrofit retrofit=new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(StringConverter.FACTORY)
+                .build();
+        QueryGET queryGET=retrofit.create(QueryGET.class);
+        Call<String> call=queryGET.getString("laiqurufeng", 22, map);
+        try {
+            Response<String>body=call.execute();
+            System.out.print(body.body());
         } catch (IOException e) {
             e.printStackTrace();
         }
