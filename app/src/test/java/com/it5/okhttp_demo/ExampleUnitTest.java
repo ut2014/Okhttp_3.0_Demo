@@ -1,5 +1,7 @@
 package com.it5.okhttp_demo;
 
+import com.it5.okhttp_demo.retrofit2.Retrofit_Demo;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -26,9 +28,23 @@ public class ExampleUnitTest {
         okhttpDemo.download_tb();
     }
 
+    @Test
+    public void testGet(){
+        Retrofit_Demo.simpleGET();
+    }
 
     @Test
-    public void testHttps(){
+    public void testPOST(){
+        Retrofit_Demo.SimplePOST();
+    }
 
+    @Test
+    public void testPath_github(){
+        Retrofit_Demo.path_GitHub();
+    }
+
+    @Test
+    public void testGet_String(){
+        Retrofit_Demo.Get_String();
     }
 }
