@@ -1,9 +1,16 @@
 package com.it5.okhttp_demo;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageView;
 
 import com.it5.okhttp_demo.https.HttpsSSL;
+import com.it5.okhttp_demo.retrofit2.Retrofit_Demo;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,7 +22,8 @@ public class MainActivity extends AppCompatActivity {
 //        postRequest();
 //        download_tb();
 //        Access_Header();
-        get_json1();
+//        get_json1();
+        upload();
     }
 
     private void getRequest() {
@@ -83,4 +91,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void upload(){//上传图像
+        String filePath="/sdcard/download/com.andbase/tp.png";
+        if (!fileIsExists(filePath)){
+            Log.e("file: ","file no found!!");
+            return;
+        }
+        Bitmap bit=BitmapFactory.decodeFile(filePath);
+        ((ImageView)findViewById(R.id.img)).setImageBitmap(bit);
+        Retrofit_Demo.upload(filePath);
+    }
+
+    //判断文件是否存在
+    public boolean fileIsExists(String strFile)
+    {
+        try
+        {
+            File f=new File(strFile);
+            if(!f.exists())
+            {
+                return false;
+            }
+
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }

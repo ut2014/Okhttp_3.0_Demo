@@ -5,12 +5,17 @@ import android.util.Log;
 
 import com.it5.okhttp_demo.retrofit2.interf.GitHub;
 import com.it5.okhttp_demo.retrofit2.interf.PageService;
+import com.it5.okhttp_demo.retrofit2.interf.PhoneService;
+import com.it5.okhttp_demo.retrofit2.interf.PhoneServiceDynamic;
 import com.it5.okhttp_demo.retrofit2.interf.QueryGET;
 import com.it5.okhttp_demo.retrofit2.interf.SimpleGET;
 import com.it5.okhttp_demo.retrofit2.interf.SimplePOST;
 import com.it5.okhttp_demo.retrofit2.interf.StringClient;
+import com.it5.okhttp_demo.retrofit2.interf.UploadServer;
 import com.it5.okhttp_demo.retrofit2.pojo.Contributor;
+import com.it5.okhttp_demo.retrofit2.pojo.PhoneResult;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +25,11 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -177,4 +186,141 @@ public class Retrofit_Demo {
             e.printStackTrace();
         }
     }
+
+    public static void phone_Query(String phone){
+        final String BASE_URL="http://apis.baidu.com";
+        final String API_KEY="8e13586b86e4b7f3758ba3bd6c9c9135";
+        //1.创建Retrofit对象
+        Retrofit retrofit=new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        //2.创建访问API的请求
+        PhoneService service=retrofit.create(PhoneService.class);
+        Call<PhoneResult>call=service.getResult(API_KEY,phone);
+        //3.发送请求
+        try {
+            Response<PhoneResult>response=call.execute();
+            //4.处理结果
+            if (response.isSuccessful()) {
+                PhoneResult result=response.body();
+                if (result!=null) {
+                    PhoneResult.RetDataEntity entity = result.getRetData();
+                    System.out.print(entity.toString());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*call.enqueue(new Callback<PhoneResult>() {
+            @Override
+            public void onResponse(Call<PhoneResult> call, Response<PhoneResult> response) {
+                //4.处理结果
+                if (response.isSuccessful()) {
+                    PhoneResult result=response.body();
+                    if (result!=null) {
+                        PhoneResult.RetDataEntity entity = result.getRetData();
+                        System.out.print(entity.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PhoneResult> call, Throwable t) {
+
+            }
+        });*/
+    }
+
+
+    public static void phone_QueryDynamic(String phone){
+        final String BASE_URL="http://apis.baidu.com";
+        //1.创建Retrofit对象
+        Retrofit retrofit=new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        //2.创建访问API的请求
+        PhoneServiceDynamic service=retrofit.create(PhoneServiceDynamic.class);
+        Call<PhoneResult>call=service.getResult(phone);
+        //3.发送请求
+        try {
+            Response<PhoneResult>response=call.execute();
+            //4.处理结果
+            if (response.isSuccessful()) {
+                PhoneResult result=response.body();
+                if (result!=null) {
+                    PhoneResult.RetDataEntity entity = result.getRetData();
+                    System.out.print(entity.toString());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static OkHttpClient getOkhttpClient(){
+        final String cookie="o86B_2132_saltkey=ZlurOOcm; o86B_2132_lastvisit=1467604630; ECM_ID=715ed3d72119b89eb9a33efec0c3b8bcb8029c16; PHPSESSID=dr49auvp45q4gv4feohr5f5l80; o86B_2132_name=TP304342; o86B_2132_auth=8002JmGNf9BxGBDuhLtPHuLiXNdsE9TU%2B4fJVdOBiOIAsaf85OKSakO3ETuZSb6FX5bl0Io15UxeEJ2Ul%2F7x74vhPxQ; Hm_lvt_3858d85a858cc0997bf162c3fb49c93b=1467608513; Hm_lpvt_3858d85a858cc0997bf162c3fb49c93b=1467616160; o86B_2132_sid=bM6A1P; o86B_2132_lastact=1467615882%09portal.php%09";
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request()
+                                .newBuilder()
+//                                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+//                                .addHeader("Accept-Encoding", "gzip, deflate")
+//                                .addHeader("Connection", "keep-alive")
+//                                .addHeader("Accept", "***")
+                                .addHeader("Cookie", cookie)
+                                .build();
+                        return chain.proceed(request);
+                    }
+
+                })
+                .build();
+
+        return httpClient;
+    }
+    public static void upload(String fpath) { // path to file like /mnt/sdcard/myfile.txt
+        String baseurl="http://dev.123go.net.cn";
+        File file = new File(fpath);
+
+        // please check you mime type, i'm uploading only images
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+        /*RequestBody rbody=new MultipartBody.Builder()
+                .addPart(requestBody).build();
+
+        RequestBody requestFile =
+                RequestBody.create(MediaType.parse("image/jpg"), file);
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+        */
+
+        Retrofit retrofit=new Retrofit.Builder()
+                .baseUrl(baseurl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(getOkhttpClient())
+                .build();
+        // 添加描述
+        /*String descriptionString = "hello, 这是文件描述";
+        RequestBody description =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), descriptionString);*/
+        UploadServer server=retrofit.create(UploadServer.class);
+        Call<ResponseBody> call = server.uploadImage(requestBody);
+        call.enqueue(new Callback<ResponseBody>() {
+
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                ResponseBody jsonObject=response.body();
+                System.out.print(jsonObject.toString());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
 }

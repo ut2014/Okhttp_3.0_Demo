@@ -53,4 +53,13 @@ public class ExampleUnitTest {
 
         Retrofit_Demo.QueryGET();
     }
+
+    @Test
+    public void testPhoneGET(){
+        Retrofit_Demo.phone_Query("15527530925");
+    }
+    @Test
+    public void testPhoneDynamic(){
+        Retrofit_Demo.phone_QueryDynamic("15024084173");
+    }
 }
