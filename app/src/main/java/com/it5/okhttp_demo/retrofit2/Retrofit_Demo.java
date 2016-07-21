@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
+import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -319,6 +320,32 @@ public class Retrofit_Demo {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
+            }
+        });
+    }
+
+
+    private void  intercep() {
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+                //请求定制：添加请求
+                Request.Builder requestBuilder = original.newBuilder()
+                        .header("APIKEY", "API_KEY");
+                //请求体定制：统一添加token参数
+                if (original.body() instanceof FormBody) {
+                    FormBody.Builder newFormBody = new FormBody.Builder();
+                    FormBody oidFormBody = (FormBody) original.body();
+                    for (int i = 0; i < oidFormBody.size(); i++) {
+                        newFormBody.addEncoded(oidFormBody.encodedName(i), oidFormBody.encodedValue(i));
+                    }
+                    newFormBody.add("token", "API_TOKEN");
+                    requestBuilder.method(original.method(), newFormBody.build());
+                }
+                Request request = requestBuilder.build();
+                return chain.proceed(request);
             }
         });
     }

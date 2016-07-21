@@ -1,5 +1,6 @@
 package com.it5.okhttp_demo;
 
+import com.it5.okhttp_demo.Interceptor.LoggingInterceptors;
 import com.it5.okhttp_demo.retrofit2.Retrofit_Demo;
 
 import org.junit.Test;
@@ -61,5 +62,13 @@ public class ExampleUnitTest {
     @Test
     public void testPhoneDynamic(){
         Retrofit_Demo.phone_QueryDynamic("15024084173");
+    }
+    @Test
+    public void testLogging(){
+        try {
+            new LoggingInterceptors().run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
