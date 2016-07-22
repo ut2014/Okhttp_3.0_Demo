@@ -64,7 +64,7 @@ public class OkhttpDemo {
 
     public void postRequest() {
         RequestBody formbody = new FormBody.Builder()
-                .add("", "")
+//                .add("", "")
                 .build();
         final Request request = new Request.Builder()
                 .url("http://www.wooyun.org")
@@ -145,6 +145,7 @@ public class OkhttpDemo {
             }
         });
     }
+
     public static void main(String... args) throws Exception {
         System.out.println("fdsa");
         new OkhttpDemo().download_tb();
